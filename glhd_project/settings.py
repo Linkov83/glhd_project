@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-c=4)l92_f_#aj$g)sozid-boj2cg8$x*q3wuqz*^p%06)q8)lu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+import os
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'glhd-project.onrender.com']
 
 
 # Application definition
