@@ -1,4 +1,3 @@
-# glhd_project/urls.py
 
 from django.http import HttpResponse
 from django.contrib import admin
@@ -10,5 +9,5 @@ def index(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/experiments/', include('database.urls')),
-    path('', index),  # Добави това за начален изглед
+    path('', index),
 ]
