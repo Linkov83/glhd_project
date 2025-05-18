@@ -1,35 +1,62 @@
+import os
 import pandas as pd
 from django.core.management.base import BaseCommand
 from database.models import Experiment
 
 class Command(BaseCommand):
-    help = 'Импортира експерименти от Excel файл'
-
-    def add_arguments(self, parser):
-        parser.add_argument('filepath', type=str, help='Път до Excel файла')
+    help = 'Import experiments from Excel file into the database.'
 
     def handle(self, *args, **kwargs):
-        filepath = kwargs['filepath']
-        df = pd.read_excel(filepath)
+        file_path = 'Laser_Hardening_Database.xlsx'  # Ensure this file is in the root dir
 
+        if not os.path.exists(file_path):
+            self.stdout.write(self.style.ERROR(f"File not found: {file_path}"))
+            return
+
+        try:
+            df = pd.read_excel(file_path)
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f"Failed to read Excel file: {e}"))
+            return
+
+        # Normalize headers
+        df.columns = [str(col).strip().lower().replace(" ", "_") for col in df.columns]
+
+        expected_fields = {
+            "metal_class", "subclass", "example_alloy", "chemical_composition",
+            "laser_power", "scan_speed", "beam_spot", "beam_quality",
+            "surface_material", "pre_treatment", "temp_range", "surface_hardness",
+            "hardened_layer_depth", "residual_stresses", "wear_resistance", "source"
+        }
+
+        missing = expected_fields - set(df.columns)
+        if missing:
+            self.stdout.write(self.style.ERROR(f"Missing fields in Excel: {missing}"))
+            return
+
+        created = 0
         for _, row in df.iterrows():
-            Experiment.objects.create(
-                metal_class=row['Metal Class'],
-                subclass=row['Subclass'],
-                example_alloy=row['Example Alloy'],
-                chemical_composition=row['Chemical Composition'],
-                laser_power=row['Laser Power (W)'],
-                scan_speed=row['Scan Speed (mm/s)'],
-                beam_spot=row['Beam Spot'],
-                beam_quality=row['Beam Quality'],
-                surface_material=row['Surface Material'],
-                pre_treatment=row['Pre-treatment'],
-                temp_range=row['Temp Range'],
-                surface_hardness=row['Hardness (HV)'],
-                hardened_layer_depth=row['Layer Depth (mm)'],
-                residual_stresses=row['Residual Stresses'],
-                wear_resistance=row['Wear Resistance'],
-                source=row['Source'],
-            )
+            try:
+                Experiment.objects.create(
+                    metal_class=row["metal_class"],
+                    subclass=row["subclass"],
+                    example_alloy=row["example_alloy"],
+                    chemical_composition=row["chemical_composition"],
+                    laser_power=row["laser_power"],
+                    scan_speed=row["scan_speed"],
+                    beam_spot=row["beam_spot"],
+                    beam_quality=row["beam_quality"],
+                    surface_material=row["surface_material"],
+                    pre_treatment=row["pre_treatment"],
+                    temp_range=row["temp_range"],
+                    surface_hardness=row["surface_hardness"],
+                    hardened_layer_depth=row["hardened_layer_depth"],
+                    residual_stresses=row["residual_stresses"],
+                    wear_resistance=row["wear_resistance"],
+                    source=row["source"]
+                )
+                created += 1
+            except Exception as e:
+                self.stdout.write(self.style.WARNING(f"Skipped row due to error: {e}"))
 
-        self.stdout.write(self.style.SUCCESS('✅ Успешен импорт на експерименти!'))
+        self.stdout.write(self.style.SUCCESS(f"Imported {created} experiments successfully."))
