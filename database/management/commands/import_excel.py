@@ -1,62 +1,40 @@
-import os
 import pandas as pd
 from django.core.management.base import BaseCommand
 from database.models import Experiment
 
 class Command(BaseCommand):
-    help = 'Import experiments from Excel file into the database.'
+    help = "Import data from Excel"
 
     def handle(self, *args, **kwargs):
-        file_path = 'Laser_Hardening_Database.xlsx'  # Ensure this file is in the root dir
-
-        if not os.path.exists(file_path):
-            self.stdout.write(self.style.ERROR(f"File not found: {file_path}"))
-            return
-
         try:
-            df = pd.read_excel(file_path)
+            df = pd.read_excel('Laser_Hardening_Database.xlsx')
         except Exception as e:
-            self.stdout.write(self.style.ERROR(f"Failed to read Excel file: {e}"))
+            self.stderr.write(self.style.ERROR(f"❌ Error reading Excel: {e}"))
             return
 
-        # Normalize headers
-        df.columns = [str(col).strip().lower().replace(" ", "_") for col in df.columns]
-
-        expected_fields = {
-            "metal_class", "subclass", "example_alloy", "chemical_composition",
-            "laser_power", "scan_speed", "beam_spot", "beam_quality",
-            "surface_material", "pre_treatment", "temp_range", "surface_hardness",
-            "hardened_layer_depth", "residual_stresses", "wear_resistance", "source"
-        }
-
-        missing = expected_fields - set(df.columns)
-        if missing:
-            self.stdout.write(self.style.ERROR(f"Missing fields in Excel: {missing}"))
-            return
-
-        created = 0
+        success = 0
         for _, row in df.iterrows():
             try:
                 Experiment.objects.create(
-                    metal_class=row["metal_class"],
-                    subclass=row["subclass"],
-                    example_alloy=row["example_alloy"],
-                    chemical_composition=row["chemical_composition"],
-                    laser_power=row["laser_power"],
-                    scan_speed=row["scan_speed"],
-                    beam_spot=row["beam_spot"],
-                    beam_quality=row["beam_quality"],
-                    surface_material=row["surface_material"],
-                    pre_treatment=row["pre_treatment"],
-                    temp_range=row["temp_range"],
-                    surface_hardness=row["surface_hardness"],
-                    hardened_layer_depth=row["hardened_layer_depth"],
-                    residual_stresses=row["residual_stresses"],
-                    wear_resistance=row["wear_resistance"],
-                    source=row["source"]
+                    Metal_Class=row['Metal Class'],
+                    Subclass=row['Subclass'],
+                    Example_Alloy=row['Example Alloy'],
+                    Chemical_Composition=row['Chemical Composition'],
+                    Laser_Power_W=row['Laser Power (W)'],
+                    Scanning_Speed_mm_s=row['Scanning Speed (mm/s)'],
+                    Beam_Spot_Size_and_Profile=row['Beam Spot Size and Profile'],
+                    Beam_Quality_M2=row['Beam Quality (M²)'],
+                    Surface_Material=row['Surface Material'],
+                    Pre_treatment=row['Pre-treatment'],
+                    Temperature_Range_C=row['Temperature Range (°C)'],
+                    Surface_Hardness_HV=row['Surface Hardness (HV)'],
+                    Hardened_Layer_Depth_mm=row['Hardened Layer Depth (mm)'],
+                    Residual_Stresses=row['Residual Stresses'],
+                    Wear_Resistance=row['Wear Resistance'],
+                    Source=row['Source'],
                 )
-                created += 1
+                success += 1
             except Exception as e:
-                self.stdout.write(self.style.WARNING(f"Skipped row due to error: {e}"))
+                self.stderr.write(self.style.WARNING(f"⚠️ Skipped row due to error: {e}"))
 
-        self.stdout.write(self.style.SUCCESS(f"Imported {created} experiments successfully."))
+        self.stdout.write(self.style.SUCCESS(f"✅ Imported {success} experiments successfully."))

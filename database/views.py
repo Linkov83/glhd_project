@@ -19,5 +19,5 @@ class ExperimentCreateView(generics.CreateAPIView):
 
 # GET: Извличане на всички експерименти
 class ExperimentListView(generics.ListAPIView):
-    queryset = Experiment.objects.all().order_by('-created_at')
+    queryset = Experiment.objects.all()
     serializer_class = ExperimentSerializer
