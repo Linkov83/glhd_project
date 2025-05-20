@@ -4,20 +4,20 @@ from .models import Experiment
 from .serializers import ExperimentSerializer
 
 
-# GET, PUT/PATCH, DELETE: Работа с единичен експеримент
+# GET, PUT/PATCH, DELETE:
 class ExperimentDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Experiment.objects.all()
     serializer_class = ExperimentSerializer
-    lookup_field = 'id'  # Позволява достъп чрез /<id>/ вместо /<pk>/
+    lookup_field = 'id'
 
 
-# POST: Създаване на експеримент
+# POST:
 class ExperimentCreateView(generics.CreateAPIView):
     queryset = Experiment.objects.all()
     serializer_class = ExperimentSerializer
 
 
-# GET: Извличане на всички експерименти
+# GET:
 class ExperimentListView(generics.ListAPIView):
     queryset = Experiment.objects.all()
     serializer_class = ExperimentSerializer
