@@ -17,6 +17,7 @@ class Experiment(models.Model):
     Subclass = models.CharField(max_length=255)
     Chemical_Composition = models.TextField()
     Source = models.CharField(max_length=255)
+    approved = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.Example_Alloy} – {self.Laser_Power_W}W @ {self.Scanning_Speed_mm_s}mm/s"
