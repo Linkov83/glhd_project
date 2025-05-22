@@ -1,19 +1,14 @@
-from rest_framework import generics, permissions
-from .models import Experiment
-from .serializers import ExperimentSerializer
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
-class ExperimentListView(generics.ListAPIView):
-    queryset = Experiment.objects.filter(approved=True).order_by("id")
-    serializer_class = ExperimentSerializer
-
-class ExperimentDetailView(generics.RetrieveAPIView):
-    queryset = Experiment.objects.filter(approved=True)
-    serializer_class = ExperimentSerializer
-
-class ExperimentCreateView(generics.CreateAPIView):
-    queryset = Experiment.objects.all()
-    serializer_class = ExperimentSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(approved=False)  # Админ ще го одобри после
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def current_user(request):
+    user = request.user
+    return Response({
+        "username": user.username,
+        "email": user.email,
+        "is_staff": user.is_staff,
+        "is_superuser": user.is_superuser,
+    })
