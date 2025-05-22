@@ -1,5 +1,10 @@
 from django.urls import path
-from .views import ExperimentCreateView, ExperimentDetailView, ExperimentListView, current_user
+from .views import (
+    ExperimentCreateView,
+    ExperimentDetailView,
+    ExperimentListView,
+    current_user,
+)
 
 urlpatterns = [
     path('', ExperimentCreateView.as_view(), name='experiment-create'),

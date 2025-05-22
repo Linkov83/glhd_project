@@ -6,4 +6,4 @@ class ExperimentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Experiment
         fields = '_all_'
-        read_only_fields = ['approved']  # ❗ ЗАБРАНЯВА ПОЛЕТО ДА СЕ ИЗПРАЩА ОТ ФРОНТЕНДА
+        read_only_fields = ['approved']
