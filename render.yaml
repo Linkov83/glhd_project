@@ -1,9 +1,5 @@
-services:
-  - type: web
-    name: glhd-backend
-    env: python
-    buildCommand: ""
-    startCommand: gunicorn glhd_project.wsgi
-    envVars:
-      - key: DJANGO_SETTINGS_MODULE
-        value: glhd_project.settings
+buildCommand: |
+  python manage.py migrate
+  python manage.py create_superuser_if_none
+  python manage.py collectstatic --noinput
+startCommand: gunicorn glhd_project.wsgi

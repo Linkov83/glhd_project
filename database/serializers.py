@@ -1,9 +1,15 @@
-# database/serializers.py
-from rest_framework import serializers
-from .models import Experiment
+from djoser.serializers import UserCreateSerializer
+from django.contrib.auth import get_user_model
 
-class ExperimentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Experiment
-        fields = "__all__"
-        read_only_fields = ['approved']
+User = get_user_model()
+
+class CustomUserCreateSerializer(UserCreateSerializer):
+    class Meta(UserCreateSerializer.Meta):
+        model = User
+        fields = ('id', 'email', 'username', 'password', 're_password')
+
+    def create(self, validated_data):
+        user = super().create(validated_data)
+        user.is_active = False
+        user.save()
+        return user
