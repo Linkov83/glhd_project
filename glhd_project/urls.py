@@ -9,7 +9,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/experiments/', include('database.urls')),
 
-    # Djoser Token Authentication
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
 
