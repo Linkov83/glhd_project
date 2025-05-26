@@ -7,7 +7,7 @@ User = get_user_model()
 class ExperimentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Experiment
-        fields = '_all_'
+        fields = '__all__'
 
 class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
