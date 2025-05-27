@@ -4,10 +4,12 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
 class ExperimentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Experiment
         fields = '__all__'
+
 
 class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -24,5 +26,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop('re_password')
-        user = User.objects.create_user(**validated_data, is_active=False)
+        try:
+            user = User.objects.create_user(**validated_data, is_active=False)
+        except Exception as e:
+            print("ERROR:", e)
+            raise e
         return user
