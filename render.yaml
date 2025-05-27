@@ -1,5 +1,4 @@
 buildCommand: |
-  python manage.py migrate
-  python manage.py create_superuser_if_none
+  pip install -r requirements.txt
   python manage.py collectstatic --noinput
 startCommand: gunicorn glhd_project.wsgi
