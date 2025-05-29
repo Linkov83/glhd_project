@@ -7,7 +7,7 @@ from .models import Experiment
 User = get_user_model()
 
 class ExperimentListCreateView(generics.ListCreateAPIView):
-    queryset = Experiment.objects.all()
+    queryset = Experiment.objects.filter(approved=True)
     serializer_class = ExperimentSerializer
 
     def get_permissions(self):
